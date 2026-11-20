@@ -1,0 +1,11 @@
+{{ 'template-hero-section.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="hero-slider"
+  style="
+    --hero-height: {{ section.settings.desktop_height }}px;
+    --hero-mobile-height: {{ section.settings.mobile_height }}px;
+    --hero-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --hero-text-color: {{ section.settings.text_color }};
+  "
+></section>

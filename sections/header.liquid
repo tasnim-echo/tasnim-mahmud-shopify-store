@@ -1,6 +1,8 @@
 {{ 'header.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'header.js' | asset_url }}" defer></script>
 
+{% assign menu_list = linklists[section.settings.menu] %}
+
 <header
   class="header"
   style="
@@ -37,9 +39,9 @@
     <nav
       class="header-desktop-nav"
     >
-      {% if section.settings.menu != blank %}
+      {% if menu_list != blank %}
         <ul class="header-menu">
-          {% for link in section.settings.menu.links %}
+          {% for link in menu_list.links %}
             <li class="header-menu-item {% if link.links != blank %}has-dropdown{% endif %}">
               <a href="{{ link.url }}">
                 {{ link.title }}
@@ -119,6 +121,13 @@
           </span>
         {% endif %}
       </a>
+
+      {% if shop.customer_accounts_enabled %}
+        <div class="header-account-desktop">
+          <a href="{{ routes.account_login_url }}">Login</a>
+          <a href="{{ routes.account_register_url }}">Register</a>
+        </div>
+      {% endif %}
     </div>
   </div>
 
@@ -126,9 +135,9 @@
     class="header-mobile-nav"
     hidden
   >
-    {% if section.settings.menu != blank %}
+    {% if menu_list != blank %}
       <ul class="header-mobile-menu">
-        {% for link in section.settings.menu.links %}
+        {% for link in menu_list.links %}
           <li class="header-mobile-item">
             {% if link.links != blank %}
               <button
@@ -166,6 +175,12 @@
           </li>
         {% endfor %}
       </ul>
+      {% if shop.customer_accounts_enabled %}
+        <div class="header-account-mobile">
+          <a href="{{ routes.account_login_url }}">Login</a>
+          <a href="{{ routes.account_register_url }}">Register</a>
+        </div>
+      {% endif %}
     {% endif %}
   </nav>
 </header>
@@ -180,19 +195,10 @@
       "label": "Logo"
     },
     {
-      "type": "range",
-      "id": "logo_width",
-      "label": "Logo width",
-      "min": 80,
-      "max": 300,
-      "step": 10,
-      "unit": "px",
-      "default": 160
-    },
-    {
       "type": "link_list",
       "id": "menu",
-      "label": "Navigation menu"
+      "label": "Header menu",
+      "default": "main-menu"
     },
     {
       "type": "color",
@@ -205,12 +211,6 @@
       "id": "text_color",
       "label": "Text color",
       "default": "#171717"
-    },
-    {
-      "type": "color",
-      "id": "hover_color",
-      "label": "Hover color",
-      "default": "#777777"
     }
   ],
   "presets": [
