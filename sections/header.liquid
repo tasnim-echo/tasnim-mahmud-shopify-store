@@ -1,0 +1,222 @@
+{{ 'header.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'header.js' | asset_url }}" defer></script>
+
+<header
+  class="header"
+  style="
+    --header-bg: {{ section.settings.background_color }};
+    --header-text: {{ section.settings.text_color }};
+  "
+  data-header
+>
+  <div class="header-inner">
+    <button
+      class="header-toggle"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+    >
+      <img
+        src="{{ 'mobile-menu-bar.svg' | asset_url }}"
+        alt=""
+        width="24"
+        height="24"
+      >
+    </button>
+
+    <div class="header-logo">
+      <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+        {% if section.settings.logo != blank %}
+          {{ section.settings.logo | image_url: width: 500 | image_tag: class: 'header-logo-image', alt: shop.name }}
+        {% else %}
+          <span>{{ shop.name }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <nav
+      class="header-desktop-nav"
+    >
+      {% if section.settings.menu != blank %}
+        <ul class="header-menu">
+          {% for link in section.settings.menu.links %}
+            <li class="header-menu-item {% if link.links != blank %}has-dropdown{% endif %}">
+              <a href="{{ link.url }}">
+                {{ link.title }}
+
+                {% if link.links != blank %}
+                  <svg viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                    <path
+                      d="M1 1L5 5L9 1"
+                      stroke="currentColor"
+                      stroke-width="1.2"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                {% endif %}
+              </a>
+
+              {% if link.links != blank %}
+                <ul class="header-submenu">
+                  {% for child_link in link.links %}
+                    <li>
+                      <a href="{{ child_link.url }}">
+                        {{ child_link.title }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </nav>
+
+    <div class="header-actions">
+      <a
+        href="{{ routes.search_url }}"
+        class="header-icon"
+        aria-label="Search"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle
+            cx="10.8"
+            cy="10.8"
+            r="6.8"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
+          <path
+            d="M16 16L21 21"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+          />
+        </svg>
+      </a>
+
+      <a
+        href="{{ routes.cart_url }}"
+        class="header-icon header-cart"
+        aria-label="Cart ({{ cart.item_count }} items)"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M3 4H5L7.5 16H18.5L21 7H6"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <circle cx="9" cy="20" r="1" fill="currentColor"/>
+          <circle cx="18" cy="20" r="1" fill="currentColor"/>
+        </svg>
+
+        {% if cart.item_count > 0 %}
+          <span class="header-cart-count">
+            {{ cart.item_count }}
+          </span>
+        {% endif %}
+      </a>
+    </div>
+  </div>
+
+  <nav
+    class="header-mobile-nav"
+    hidden
+  >
+    {% if section.settings.menu != blank %}
+      <ul class="header-mobile-menu">
+        {% for link in section.settings.menu.links %}
+          <li class="header-mobile-item">
+            {% if link.links != blank %}
+              <button
+                class="header-mobile-dropdown-toggle"
+                type="button"
+                aria-expanded="false"
+              >
+                <span>{{ link.title }}</span>
+
+                <svg viewBox="0 0 10 6" fill="none" aria-hidden="true">
+                  <path
+                    d="M1 1L5 5L9 1"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </button>
+
+              <ul class="header-mobile-submenu" hidden>
+                {% for child_link in link.links %}
+                  <li>
+                    <a href="{{ child_link.url }}">
+                      {{ child_link.title }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+
+            {% else %}
+              <a href="{{ link.url }}">
+                {{ link.title }}
+              </a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </nav>
+</header>
+
+{% schema %}
+{
+  "name": "Custom header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 80,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#171717"
+    },
+    {
+      "type": "color",
+      "id": "hover_color",
+      "label": "Hover color",
+      "default": "#777777"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom header"
+    }
+  ]
+}
+{% endschema %}
